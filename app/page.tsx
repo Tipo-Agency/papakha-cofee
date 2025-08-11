@@ -1862,20 +1862,22 @@ const getSectionId = (menuItem: string) => {
   return sectionMap[menuItem] || ""
 }
 
-// Добавить новую функцию после других функций, перед useEffect
+// Улучшенная функция центрирования активной кнопки в навигации
 const scrollNavToActiveItem = (activeItem: string) => {
-  const navContainer = document.querySelector(".nav-scroll-container")
-  const activeButton = document.querySelector(`[data-section="${activeItem}"]`)
+  const navContainer = document.querySelector(".nav-scroll-container") as HTMLElement
+  const activeButton = document.querySelector(`[data-section="${activeItem}"]`) as HTMLElement
 
   if (navContainer && activeButton) {
-    const containerRect = navContainer.getBoundingClientRect()
-    const buttonRect = activeButton.getBoundingClientRect()
+    // Получаем позицию кнопки относительно контейнера навигации
+    const buttonOffsetLeft = activeButton.offsetLeft
+    const buttonWidth = activeButton.offsetWidth
+    const containerWidth = navContainer.clientWidth
 
     // Вычисляем позицию для центрирования активной кнопки
-    const scrollLeft = (activeButton as HTMLElement).offsetLeft - containerRect.width / 2 + buttonRect.width / 2
+    const scrollLeft = buttonOffsetLeft - containerWidth / 2 + buttonWidth / 2
 
     navContainer.scrollTo({
-      left: scrollLeft,
+      left: Math.max(0, scrollLeft), // Не прокручиваем в отрицательные значения
       behavior: "smooth",
     })
   }
@@ -1883,7 +1885,7 @@ const scrollNavToActiveItem = (activeItem: string) => {
 
 // Обновить useEffect для Intersection Observer
 const Home = () => {
-  const [activeSection, setActiveSection] = useState("")
+  const [activeSection, setActiveSection] = useState("breakfast")
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [searchResults, setSearchResults] = useState<any[]>([])
@@ -1986,6 +1988,13 @@ const Home = () => {
     )
   }
 
+  // Центрирование активной секции при загрузке
+  useEffect(() => {
+    setTimeout(() => {
+      scrollNavToActiveItem(activeSection)
+    }, 100)
+  }, [])
+
   useEffect(() => {
     const sections = [
       "breakfast",
@@ -2014,17 +2023,25 @@ const Home = () => {
 
     const observer = new IntersectionObserver(
       (entries) => {
+        // Находим секцию которая больше всего видна
+        let maxRatio = 0
+        let activeId = ""
+        
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id)
-            // Добавить автоматический скролл навигации
-            scrollNavToActiveItem(entry.target.id)
+          if (entry.isIntersecting && entry.intersectionRatio > maxRatio) {
+            maxRatio = entry.intersectionRatio
+            activeId = (entry.target as HTMLElement).id
           }
         })
+
+        if (activeId) {
+          setActiveSection(activeId)
+          scrollNavToActiveItem(activeId)
+        }
       },
       {
-        rootMargin: "-20% 0px -70% 0px",
-        threshold: 0.1,
+        rootMargin: "-10% 0px -60% 0px",
+        threshold: [0.1, 0.3, 0.5, 0.7],
       },
     )
 
@@ -2307,22 +2324,22 @@ const Home = () => {
             </svg>
         </div>
 
-        {/* Navigation Menu - новый дизайн в стиле таблеток */}
-        <nav className="mb-8 sticky top-0 z-40 bg-[#f4eadc] py-4 -mx-6 px-6">
-          <div className="relative">
+        {/* Navigation Menu - исправленный дизайн */}
+        <nav className="mb-8 sticky top-0 z-40 bg-[#f4eadc] py-4">
+          <div className="max-w-full overflow-hidden px-6">
             <div
-              className="nav-scroll-container overflow-x-auto pb-4"
+              className="nav-scroll-container overflow-x-auto scrollbar-hide pb-1"
               style={{
                 scrollbarWidth: "none",
                 msOverflowStyle: "none",
               }}
             >
               <style jsx>{`
-                div::-webkit-scrollbar {
+                .nav-scroll-container::-webkit-scrollbar {
                   display: none;
                 }
               `}</style>
-              <div className="flex gap-3 px-4" style={{ minWidth: "max-content" }}>
+              <div className="flex gap-2" style={{ width: "max-content" }}>
                 {menuItems.map((item, index) => {
                   const sectionId = getSectionId(item)
                   const isActive = activeSection === sectionId
@@ -2332,10 +2349,10 @@ const Home = () => {
                       key={index}
                       data-section={sectionId}
                       onClick={() => scrollToSection(sectionId)}
-                      className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium flex-shrink-0 ${
+                      className={`whitespace-nowrap px-3 py-2 text-sm font-medium flex-shrink-0 transition-all duration-200 ${
                         isActive
-                          ? "bg-[#94573c] text-white border-[#94573c]"
-                          : "bg-transparent text-[#94573c] border-[#94573c] hover:bg-[#94573c] hover:text-white"
+                          ? "text-[#94573c] rounded-xl border border-[#94573c]"
+                          : "text-[#94573c] hover:rounded-xl hover:border hover:border-[#94573c]/30"
                       }`}
                     >
                       {item}
