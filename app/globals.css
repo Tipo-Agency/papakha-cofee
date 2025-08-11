@@ -2,6 +2,110 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Axiforma Font Face Definitions */
+@font-face {
+  font-family: 'Axiforma';
+  src: url('/fonts/font/Axiforma-Thin.eot');
+  src: local('Axiforma Thin'), local('Axiforma-Thin'),
+      url('/fonts/font/Axiforma-Thin.eot?#iefix') format('embedded-opentype'),
+      url('/fonts/font/Axiforma-Thin.woff2') format('woff2'),
+      url('/fonts/font/Axiforma-Thin.woff') format('woff'),
+      url('/fonts/font/Axiforma-Thin.ttf') format('truetype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Axiforma';
+  src: url('/fonts/font/Axiforma-Light.eot');
+  src: local('Axiforma Light'), local('Axiforma-Light'),
+      url('/fonts/font/Axiforma-Light.eot?#iefix') format('embedded-opentype'),
+      url('/fonts/font/Axiforma-Light.woff2') format('woff2'),
+      url('/fonts/font/Axiforma-Light.woff') format('woff'),
+      url('/fonts/font/Axiforma-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Axiforma';
+  src: url('/fonts/font/Axiforma-Regular.eot');
+  src: local('Axiforma Regular'), local('Axiforma-Regular'),
+      url('/fonts/font/Axiforma-Regular.eot?#iefix') format('embedded-opentype'),
+      url('/fonts/font/Axiforma-Regular.woff2') format('woff2'),
+      url('/fonts/font/Axiforma-Regular.woff') format('woff'),
+      url('/fonts/font/Axiforma-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Axiforma';
+  src: url('/fonts/font/Axiforma-Medium.eot');
+  src: local('Axiforma Medium'), local('Axiforma-Medium'),
+      url('/fonts/font/Axiforma-Medium.eot?#iefix') format('embedded-opentype'),
+      url('/fonts/font/Axiforma-Medium.woff2') format('woff2'),
+      url('/fonts/font/Axiforma-Medium.woff') format('woff'),
+      url('/fonts/font/Axiforma-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Axiforma';
+  src: url('/fonts/font/Axiforma-SemiBold.eot');
+  src: local('Axiforma SemiBold'), local('Axiforma-SemiBold'),
+      url('/fonts/font/Axiforma-SemiBold.eot?#iefix') format('embedded-opentype'),
+      url('/fonts/font/Axiforma-SemiBold.woff2') format('woff2'),
+      url('/fonts/font/Axiforma-SemiBold.woff') format('woff'),
+      url('/fonts/font/Axiforma-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Axiforma';
+  src: url('/fonts/font/Axiforma-Bold.eot');
+  src: local('Axiforma Bold'), local('Axiforma-Bold'),
+      url('/fonts/font/Axiforma-Bold.eot?#iefix') format('embedded-opentype'),
+      url('/fonts/font/Axiforma-Bold.woff2') format('woff2'),
+      url('/fonts/font/Axiforma-Bold.woff') format('woff'),
+      url('/fonts/font/Axiforma-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Axiforma';
+  src: url('/fonts/font/Axiforma-ExtraBold.eot');
+  src: local('Axiforma ExtraBold'), local('Axiforma-ExtraBold'),
+      url('/fonts/font/Axiforma-ExtraBold.eot?#iefix') format('embedded-opentype'),
+      url('/fonts/font/Axiforma-ExtraBold.woff2') format('woff2'),
+      url('/fonts/font/Axiforma-ExtraBold.woff') format('woff'),
+      url('/fonts/font/Axiforma-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Axiforma';
+  src: url('/fonts/font/Axiforma-Black.eot');
+  src: local('Axiforma Black'), local('Axiforma-Black'),
+      url('/fonts/font/Axiforma-Black.eot?#iefix') format('embedded-opentype'),
+      url('/fonts/font/Axiforma-Black.woff2') format('woff2'),
+      url('/fonts/font/Axiforma-Black.woff') format('woff'),
+      url('/fonts/font/Axiforma-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
 
 @layer utilities {
   .text-balance {
@@ -86,6 +190,6 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
   }
 }

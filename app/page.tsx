@@ -1944,14 +1944,17 @@ const Home = () => {
             />
           </div>
           <div className="p-4 flex-1 flex flex-col">
-            <h3 className="text-[#94573c] text-base font-semibold mb-2 line-clamp-2">{product.name}</h3>
+            <h3 className="text-[#94573c] text-base mb-2 line-clamp-2">{product.name}</h3>
             <div className="mt-4">
               <Button
                 onClick={() => openProductModal(product)}
                 className="w-full bg-[#94573c] hover:bg-[#7a4530] text-[#f4eadc] rounded-xl py-3 text-sm flex items-center justify-between"
               >
-                <span className="font-bold">{product.price}</span>
-                <ShoppingCart className="w-4 h-4" />
+                <span className="flex items-center w-full justify-between gap-2">
+                  <ShoppingCart className="w-4 h-4 flex-shrink-0" style={{ marginTop: 0, marginBottom: 0 }} />
+                  <span className="flex-1 text-center flex items-center justify-center" style={{ lineHeight: 1 }}>{product.price}</span>
+                </span>
+                
               </Button>
             </div>
           </div>
