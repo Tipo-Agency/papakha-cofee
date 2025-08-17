@@ -1,35 +1,21 @@
 "use client"
 
-import { Search, X, ShoppingCart } from "lucide-react"
+import { Search, X, ShoppingCart, Globe } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { useState, useEffect } from "react"
 
-// Обновить массив menuItems согласно новому порядку категорий
-const menuItems = [
-  "Завтраки",
-  "Дагестанская кухня",
-  "Салаты",
-  "Супы",
-  "Сендвичи и бургеры",
-  "Горячее меню",
-  "Выпечка",
-  "Гарниры",
-  "Начинки и соусы",
-  "Детское меню",
-  "Десерты",
-  "Кофе",
-  "Холодный кофе",
-  "Шоколад",
-  "Чай без чая",
-  "Селекционные чаи",
-  "Лимонады",
-  "Смузи",
-  "Йогурты&Боулы",
-  "Свежевыжатые соки",
-  "Вода",
-  "Для детей",
+const languages = [
+  { code: 'ru', name: 'RU', fullName: 'Русский' },
+  { code: 'uz', name: 'UZ', fullName: 'O\'zbek' },
+  { code: 'en', name: 'EN', fullName: 'English' }
 ]
+
+
+// ... existing code ...
+
+// Массив категорий меню (будет загружаться из API)
+const menuItems: string[] = []
 
 // Breakfast products organized by subsections
 // Обновить kashaProducts - объединить пшенную, овсяную и рисовую в одну карточку
@@ -1885,6 +1871,8 @@ const scrollNavToActiveItem = (activeItem: string) => {
 
 // Обновить useEffect для Intersection Observer
 const Home = () => {
+  const [currentLanguage, setCurrentLanguage] = useState<'ru' | 'uz' | 'en'>('ru')
+  const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false)
   const [activeSection, setActiveSection] = useState("breakfast")
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
@@ -1927,6 +1915,18 @@ const Home = () => {
       scrollToSection(sectionId)
     }
   }
+
+  // Закрытие языкового дропдауна при клике вне его
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setIsLanguageDropdownOpen(false)
+    }
+
+    if (isLanguageDropdownOpen) {
+      document.addEventListener('click', handleClickOutside)
+      return () => document.removeEventListener('click', handleClickOutside)
+    }
+  }, [isLanguageDropdownOpen])
 
   // Новый дизайн карточек с фиксированной кнопкой внизу
   const renderProductGrid = (products: any[]) => (
@@ -2071,6 +2071,37 @@ const Home = () => {
             <Image src="/logo.svg" alt="Papakha Logo" width={120} height={40} className="h-10 w-auto object-contain" />
           </div>
           <div className="flex items-center">
+                        {/* Language Switcher */}
+                        <div className="relative">
+              <button
+                onClick={() => setIsLanguageDropdownOpen(!isLanguageDropdownOpen)}
+                className="flex items-center space-x-2 px-3 py-2 bg-white/50 hover:bg-white/70 rounded-lg transition-colors border border-[#94573c]/20"
+              >
+                <Globe className="w-4 h-4 text-[#94573c]" />
+                <span className="text-[#94573c] font-medium text-sm">
+                  {languages.find(lang => lang.code === currentLanguage)?.name}
+                </span>
+              </button>
+              
+              {isLanguageDropdownOpen && (
+                <div className="absolute top-full right-0 mt-2 bg-white rounded-lg shadow-lg border border-[#94573c]/20 overflow-hidden z-50 min-w-[120px]">
+                  {languages.map((language) => (
+                    <button
+                      key={language.code}
+                      onClick={() => {
+                        setCurrentLanguage(language.code as 'ru' | 'uz' | 'en')
+                        setIsLanguageDropdownOpen(false)
+                      }}
+                      className={`w-full px-4 py-2 text-left text-sm transition-colors hover:bg-[#f4eadc] ${
+                        currentLanguage === language.code ? 'bg-[#f4eadc] text-[#94573c] font-medium' : 'text-gray-700'
+                      }`}
+                    >
+                      {language.fullName}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
             <button
               onClick={openSearch}
               className="w-10 h-10 bg-[#94573c] rounded-full flex items-center justify-center hover:bg-[#7a4530] transition-colors"
