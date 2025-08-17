@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { apiClient } from '@/lib/api'
+import { apiClient, API_BASE_URL } from '@/lib/api'
 import { Language, MenuResponse, Category, Dish } from '@/types'
 
 export const useMenu = (language: Language) => {
@@ -138,8 +138,7 @@ export const useMenu = (language: Language) => {
     if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
       return imagePath
     }
-    // Возвращаем путь без базового URL API
-    return imagePath.startsWith('/') ? imagePath : `/${imagePath}`
+    return `${API_BASE_URL}${imagePath.startsWith('/') ? imagePath : `/${imagePath}`}`
   }
 
   // Функция для получения оптимизированного URL изображения с параметрами

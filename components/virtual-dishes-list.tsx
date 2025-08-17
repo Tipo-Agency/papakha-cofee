@@ -1,19 +1,20 @@
-import React, { useMemo } from 'react'
-import { useVirtualList } from '@/hooks/use-virtual-list'
-import { LazyImage } from '@/components/ui/lazy-image'
+'use client'
+
+import React from 'react'
 import { Button } from '@/components/ui/button'
+import { LazyImage } from '@/components/ui/lazy-image'
 import { ImagePlaceholder } from '@/components/ui/image-placeholder'
+import { useVirtualList } from '@/hooks/use-virtual-list'
 import { Dish } from '@/types'
 
-// Функция для формирования полного URL изображения
 const getFullImageUrl = (imagePath: string): string => {
   if (!imagePath || imagePath.trim() === '') return ''
   
+  const API_BASE_URL = 'https://api.papakhacoffee.uz'
   if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
     return imagePath
   }
-  // Возвращаем путь без базового URL API
-  return imagePath.startsWith('/') ? imagePath : `/${imagePath}`
+  return `${API_BASE_URL}${imagePath.startsWith('/') ? imagePath : `/${imagePath}`}`
 }
 
 interface VirtualDishesListProps {
@@ -38,18 +39,6 @@ export const VirtualDishesList: React.FC<VirtualDishesListProps> = ({
     overscan: 3, // Количество элементов для предзагрузки
   })
 
-  // Группируем блюда по категориям для лучшей организации
-  const groupedDishes = useMemo(() => {
-    const groups: { [key: string]: Dish[] } = {}
-    dishes.forEach(dish => {
-      if (!groups[dish.category]) {
-        groups[dish.category] = []
-      }
-      groups[dish.category].push(dish)
-    })
-    return groups
-  }, [dishes])
-
   if (dishes.length === 0) {
     return (
       <div className="text-center py-12">
@@ -60,76 +49,68 @@ export const VirtualDishesList: React.FC<VirtualDishesListProps> = ({
 
   return (
     <div className={className}>
-      {Object.entries(groupedDishes).map(([category, categoryDishes]) => (
-        <div key={category} className="mb-8">
-          <h3 className="text-[#94573c] text-xl font-semibold border-b border-[#94573c]/20 pb-2 mb-4">
-            {category}
-          </h3>
-          
-          <div
-            ref={containerRef}
-            className="relative overflow-auto"
-            style={{ height: containerHeight }}
-          >
-            <div style={{ height: totalHeight, position: 'relative' }}>
-              {visibleItems.map(({ item: dish, top }) => (
-                <div
-                  key={`${dish.name}-${dish.price}`}
-                  className="absolute w-full"
-                  style={{ top, height: DISH_CARD_HEIGHT }}
-                >
-                  <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow p-4">
-                    <div className="flex gap-4">
-                      <div className="flex-shrink-0">
-                        <div className="relative w-24 h-24 rounded-lg overflow-hidden">
-                          {dish.photo && dish.photo.trim() !== '' ? (
-                            <LazyImage
-                              src={getFullImageUrl(dish.photo)}
-                              alt={dish.name}
-                              fill
-                              className="object-cover"
-                              sizes="96px"
-                              quality={60}
-                            />
-                          ) : (
-                            <ImagePlaceholder
-                              className="w-full h-full rounded-lg"
-                              size="sm"
-                              text="Нет фото"
-                            />
-                          )}
-                        </div>
-                      </div>
-                      
-                      <div className="flex-1 min-w-0">
-                        <h4 className="text-lg font-semibold text-[#94573c] mb-2 truncate">
-                          {dish.name}
-                        </h4>
-                        {dish.description && (
-                          <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-                            {dish.description}
-                          </p>
-                        )}
-                        <div className="flex justify-between items-center">
-                          <span className="text-lg font-bold text-[#94573c]">
-                            {dish.price} ₽
-                          </span>
-                          <Button 
-                            size="sm"
-                            onClick={() => onDishClick(dish)}
-                          >
-                            Подробнее
-                          </Button>
-                        </div>
-                      </div>
+      <div
+        ref={containerRef}
+        className="relative overflow-auto"
+        style={{ height: containerHeight }}
+      >
+        <div style={{ height: totalHeight, position: 'relative' }}>
+          {visibleItems.map(({ item: dish, top }) => (
+            <div
+              key={`${dish.name}-${dish.price}`}
+              className="absolute w-full"
+              style={{ top, height: DISH_CARD_HEIGHT }}
+            >
+              <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow p-4">
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="relative w-24 h-24 rounded-lg overflow-hidden">
+                      {dish.photo && dish.photo.trim() !== '' ? (
+                        <LazyImage
+                          src={getFullImageUrl(dish.photo)}
+                          alt={dish.name}
+                          fill
+                          className="object-cover"
+                          sizes="96px"
+                          quality={60}
+                        />
+                      ) : (
+                        <ImagePlaceholder
+                          className="w-full h-full rounded-lg"
+                          size="sm"
+                          text="Нет фото"
+                        />
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-lg font-semibold text-[#94573c] mb-2 truncate">
+                      {dish.name}
+                    </h4>
+                    {dish.description && (
+                      <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                        {dish.description}
+                      </p>
+                    )}
+                    <div className="flex justify-between items-center">
+                      <span className="text-lg font-bold text-[#94573c]">
+                        {dish.price} ₽
+                      </span>
+                      <Button 
+                        size="sm"
+                        onClick={() => onDishClick(dish)}
+                      >
+                        Подробнее
+                      </Button>
                     </div>
                   </div>
                 </div>
-              ))}
+              </div>
             </div>
-          </div>
+          ))}
         </div>
-      ))}
+      </div>
     </div>
   )
 }

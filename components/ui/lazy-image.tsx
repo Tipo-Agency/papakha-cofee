@@ -66,11 +66,6 @@ export const LazyImage: React.FC<LazyImageProps> = ({
         className={cn(fill ? 'w-full h-full' : '', className)}
         size="md"
         text="Нет фото"
-        style={
-          !fill && width && height
-            ? { width: `${width}px`, height: `${height}px` }
-            : undefined
-        }
       />
     )
   }
@@ -103,11 +98,6 @@ export const LazyImage: React.FC<LazyImageProps> = ({
         className={cn(fill ? 'w-full h-full' : '', className)}
         size="md"
         text="Ошибка загрузки"
-        style={
-          !fill && width && height
-            ? { width: `${width}px`, height: `${height}px` }
-            : undefined
-        }
       />
     )
   }
