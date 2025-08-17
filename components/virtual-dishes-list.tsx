@@ -9,11 +9,11 @@ import { Dish } from '@/types'
 const getFullImageUrl = (imagePath: string): string => {
   if (!imagePath || imagePath.trim() === '') return ''
   
-  const API_BASE_URL = 'https://api.papakhacoffee.uz'
   if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
     return imagePath
   }
-  return `${API_BASE_URL}${imagePath.startsWith('/') ? imagePath : `/${imagePath}`}`
+  // Возвращаем путь без базового URL API
+  return imagePath.startsWith('/') ? imagePath : `/${imagePath}`
 }
 
 interface VirtualDishesListProps {
