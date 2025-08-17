@@ -10,5 +10,14 @@ export function cn(...inputs: ClassValue[]) {
  * Преобразует в нижний регистр и заменяет пробелы на дефисы
  */
 export function generateSectionId(categoryName: string): string {
-  return categoryName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+  return categoryName
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-zа-я0-9-]/gi, '') // Добавляем поддержку кириллицы
+    .replace(/^-+|-+$/g, '') // Удаляем дефисы в начале и конце
+}
+
+export function isMainSubcategory(subcategoryName: string): boolean {
+  const mainNames = ['Основные', 'Asosiy', 'Main']
+  return mainNames.includes(subcategoryName)
 }

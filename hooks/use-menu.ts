@@ -77,11 +77,11 @@ export const useMenu = (language: Language) => {
     return category.subcategories.flatMap(sub => sub.dishes)
   }
 
-  const searchDishes = (query: string): Dish[] => {
+  const searchDishes = (query: string): (Dish & { id: string })[] => {
     if (!menu || !query.trim()) return []
     
     const searchTerm = query.toLowerCase()
-    const results: Dish[] = []
+    const results: (Dish & { id: string })[] = []
     
     menu.categories.forEach(category => {
       category.subcategories.forEach(subcategory => {
@@ -90,7 +90,9 @@ export const useMenu = (language: Language) => {
             dish.name.toLowerCase().includes(searchTerm) ||
             dish.description.toLowerCase().includes(searchTerm)
           ) {
-            results.push(dish)
+            // Создаем уникальный ID из имени блюда и цены
+            const uniqueId = `${dish.name}-${dish.price}`.replace(/\s+/g, '-').toLowerCase()
+            results.push({ ...dish, id: uniqueId })
           }
         })
       })

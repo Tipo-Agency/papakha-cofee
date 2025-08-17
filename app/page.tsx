@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { useState, useEffect } from "react"
 import { useMenu } from "@/hooks/use-menu"
-import { generateSectionId } from "@/lib/utils"
+import { generateSectionId, isMainSubcategory } from "@/lib/utils"
 import { Language, Dish } from "@/types"
 import { LazyImage } from "@/components/ui/lazy-image"
 import { ImagePlaceholder } from "@/components/ui/image-placeholder"
@@ -73,7 +73,7 @@ const Home = () => {
     }
     
     const now = Date.now()
-    const minUpdateInterval = 300 // Увеличиваем минимальный интервал до 300мс
+    const minUpdateInterval = 500 // Увеличиваем минимальный интервал до 500мс для более стабильной работы
     
     // Проверяем, прошло ли достаточно времени с последнего обновления
     if (now - lastUpdateTimeRef.current < minUpdateInterval) {
@@ -85,12 +85,12 @@ const Home = () => {
       clearTimeout(updateActiveSectionTimeoutRef.current)
     }
     
-    // Устанавливаем новый таймаут
+    // Устанавливаем новый таймаут с увеличенной задержкой
     updateActiveSectionTimeoutRef.current = setTimeout(() => {
       setActiveSection(sectionId)
       scrollNavToActiveItem(sectionId)
       lastUpdateTimeRef.current = Date.now()
-    }, 200) // Задержка 200мс
+    }, 300) // Увеличиваем задержку до 300мс
   }, [activeSection])
 
   // Используем хук для работы с полным меню
@@ -145,10 +145,12 @@ const Home = () => {
     }
   }
 
-  const scrollToProduct = (productId: number) => {
+  const scrollToProduct = (productId: string) => {
     // Функция будет работать после загрузки данных из API
     const allDishes = getAllDishes()
-    const dish = allDishes.find((d) => d.name === productId.toString())
+    // Извлекаем имя блюда из ID (формат: name-price)
+    const dishName = productId.split('-')[0]
+    const dish = allDishes.find((d) => d.name.toLowerCase() === dishName)
     if (dish) {
       // Находим категорию для блюда
       if (menu) {
@@ -328,8 +330,14 @@ const Home = () => {
             <Image src="/logo.svg" alt="Papakha Logo" width={120} height={40} className="h-10 w-auto object-contain" />
           </div>
           <div className="flex items-center space-x-3">
-                        {/* Language Switcher */}
-                        <div className="relative">
+            <button
+              onClick={openSearch}
+              className="w-10 h-10 bg-[#94573c] rounded-full flex items-center justify-center hover:bg-[#7a4530] transition-colors"
+            >
+              <Search className="w-5 h-5 text-white" />
+            </button>
+            {/* Language Switcher */}
+            <div className="relative">
               <button
                 onClick={() => setIsLanguageDropdownOpen(!isLanguageDropdownOpen)}
                 className="flex items-center space-x-2 px-3 py-2 bg-white/50 hover:bg-white/70 rounded-lg transition-colors border border-[#94573c]/20"
@@ -374,12 +382,6 @@ const Home = () => {
                 </div>
               )}
             </div>
-            <button
-              onClick={openSearch}
-              className="w-10 h-10 bg-[#94573c] rounded-full flex items-center justify-center hover:bg-[#7a4530] transition-colors"
-            >
-              <Search className="w-5 h-5 text-white" />
-            </button>
           </div>
         </div>
       </header>
@@ -437,14 +439,39 @@ const Home = () => {
                       }}
                       className="flex items-center p-4 bg-[#f4eadc] rounded-xl hover:bg-gray-50 cursor-pointer transition-colors shadow-sm"
                     >
-                      <div className="w-16 h-16 bg-gray-100 rounded-xl mr-4 flex-shrink-0">
-                        <Image
-                          src={product.image || "/placeholder.svg"}
-                          alt={product.name}
-                          width={64}
-                          height={64}
-                          className="w-full h-full object-cover rounded-xl"
-                        />
+                      <div className="relative w-16 h-16 bg-gray-100 rounded-xl mr-4 flex-shrink-0 overflow-hidden">
+                        {product.photo && product.photo.trim() !== '' ? (
+                          <>
+                            <ImagePreloader
+                              src={getFullImageUrl(product.photo)}
+                              onLoad={() => {
+                                addImageToCache(product.photo)
+                              }}
+                            />
+                            {isImageLoaded(product.photo) ? (
+                              <LazyImage
+                                src={getCachedImageUrl(product.photo)}
+                                alt={product.name}
+                                width={64}
+                                height={64}
+                                className="w-full h-full object-cover rounded-xl"
+                                quality={60}
+                              />
+                            ) : (
+                              <ImagePlaceholder
+                                className="w-full h-full rounded-xl"
+                                size="sm"
+                                text="Загрузка..."
+                              />
+                            )}
+                          </>
+                        ) : (
+                          <ImagePlaceholder
+                            className="w-full h-full rounded-xl"
+                            size="sm"
+                            text="Нет фото"
+                          />
+                        )}
                       </div>
                       <div className="flex-1">
                         <h4 className="text-[#94573c] font-medium text-base">{product.name}</h4>
@@ -514,17 +541,16 @@ const Home = () => {
             </div>
 
             <h4 className="text-[#94573c] font-bold text-lg mb-2">{selectedProduct.name}</h4>
-            <p className="text-gray-600 text-sm mb-4 leading-relaxed">
+            <p className="text-[#94573c] text-sm mb-4 leading-relaxed">
               {selectedProduct.description ||
                 "Вкусное блюдо, приготовленное по авторскому рецепту из качественных ингредиентов."}
             </p>
-            <div className="flex items-center justify-between">
-                                                  <span className="text-[#94573c] font-bold text-xl">{formatPrice(selectedProduct.price, currentLanguage)}</span>
-              <Button className="bg-[#94573c] hover:bg-[#7a4530] text-white rounded-xl px-6 py-2 flex items-center gap-2">
-                <ShoppingCart className="w-4 h-4" />
-                Добавить в заказ
-              </Button>
-            </div>
+            <Button 
+              className="gap-2 whitespace-nowrap font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 w-full bg-[#94573c] hover:bg-[#7a4530] text-[#f4eadc] rounded-xl py-3 text-sm flex items-center justify-center"
+            >
+              <img src="cart-icon.svg" alt="" />
+              <span className="font-bold">{formatPrice(selectedProduct.price, currentLanguage)}</span>
+            </Button>
           </div>
         </div>
       )}
@@ -724,10 +750,12 @@ const Home = () => {
                   <div className="space-y-6">
                     {categoryData.subcategories && categoryData.subcategories.length > 0 ? (
                       categoryData.subcategories.map((subcategory, subIndex) => (
-                        <div key={subIndex} className="space-y-3">
-                          <h3 className="text-[#94573c] text-xl font-semibold border-b border-[#94573c]/20 pb-2 mb-3">
-                            {subcategory.subcategory || 'Без названия'}
-                          </h3>
+                        <div key={subIndex} className={`space-y-3 ${isMainSubcategory(subcategory.subcategory) ? 'pt-0' : 'pt-6'}`}>
+                          {!isMainSubcategory(subcategory.subcategory) && (
+                            <h3 className="text-[#94573c] text-xl font-semibold pb-2 mb-3">
+                              {subcategory.subcategory}
+                            </h3>
+                          )}
                           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                             {subcategory.dishes && subcategory.dishes.length > 0 ? (
                               subcategory.dishes.map((dish, dishIndex) => (
@@ -773,14 +801,14 @@ const Home = () => {
                                   </h3>
                                     <div className="mt-auto">
                                       <Button 
-                                        className="gap-2 whitespace-nowrap font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 w-full bg-[#94573c] hover:bg-[#7a4530] text-[#f4eadc] rounded-xl py-3 text-sm flex items-center justify-between"
+                                        className="gap-2 whitespace-nowrap font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 w-full bg-[#94573c] hover:bg-[#7a4530] text-[#f4eadc] rounded-xl py-3 text-sm flex items-center justify-center"
                                         onClick={() => {
                                           setSelectedProduct(dish)
                                           setIsProductModalOpen(true)
                                         }}
                                       >
+                                        <img src="cart-icon.svg" alt="" />
                                         <span className="font-bold">{formatPrice(dish.price, currentLanguage)}</span>
-                                        <ShoppingCart className="w-4 h-4" />
                                       </Button>
                                     </div>
                                   </div>
