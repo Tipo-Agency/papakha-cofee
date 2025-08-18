@@ -760,7 +760,7 @@ const Home = () => {
                             {subcategory.dishes && subcategory.dishes.length > 0 ? (
                               subcategory.dishes.map((dish, dishIndex) => (
                                 <div key={dishIndex} className="bg-[#f4eadc] rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-80">
-                                  <div className="w-full h-48 overflow-hidden">
+                                  <div className="w-full h-56 overflow-hidden">
                                     {dish.photo && dish.photo.trim() !== '' ? (
                                       <>
                                         <ImagePreloader
@@ -777,21 +777,21 @@ const Home = () => {
                                           alt={dish.name}
                                           width={300}
                                           height={300}
-                                          className="object-cover w-full h-48"
+                                          className="object-cover w-full h-56"
                                           sizes="(max-width: 768px) 50vw, 25vw"
                                           quality={75}
                                         />
                                       </>
                                     ) : (
                                       <ImagePlaceholder
-                                        className="w-full h-48"
+                                        className="w-full h-56"
                                         size="md"
                                         text="Нет фото"
                                       />
                                     )}
                                   </div>
                                   <div className="p-4 flex-1 flex flex-col">
-                                                                      <h3 className="text-[#94573c] text-base font-semibold mb-2 line-clamp-2" style={{
+                                                                      <h3 className="text-[#94573c] text-sm font-semibold mb-2" style={{
                                     display: '-webkit-box',
                                     WebkitLineClamp: 2,
                                     WebkitBoxOrient: 'vertical',
@@ -808,7 +808,7 @@ const Home = () => {
                                         }}
                                       >
                                         <img src="cart-icon.svg" alt="" />
-                                        <span className="font-bold">{formatPrice(dish.price, currentLanguage)}</span>
+                                        <span className="font-medium">{formatPrice(dish.price, currentLanguage)}</span>
                                       </Button>
                                     </div>
                                   </div>
