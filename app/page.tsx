@@ -194,15 +194,15 @@ const Home = () => {
       {products.map((product) => (
         <div
           key={product.id}
-          className="bg-[#f4eadc] rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col"
+          className="bg-[#f4eadc] rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-80"
         >
-          <div className="aspect-square">
+          <div className="w-full h-48 overflow-hidden">
             <Image
               src={product.image || "/placeholder.svg"}
               alt={product.name}
               width={300}
               height={300}
-              className="object-cover w-full h-full"
+              className="object-cover w-full h-48"
             />
           </div>
           <div className="p-4 flex-1 flex flex-col">
@@ -759,8 +759,8 @@ const Home = () => {
                           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                             {subcategory.dishes && subcategory.dishes.length > 0 ? (
                               subcategory.dishes.map((dish, dishIndex) => (
-                                <div key={dishIndex} className="bg-[#f4eadc] rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col">
-                                  <div className="aspect-square" style={{ aspectRatio: '1 / 1' }}>
+                                <div key={dishIndex} className="bg-[#f4eadc] rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-80">
+                                  <div className="w-full h-48 overflow-hidden">
                                     {dish.photo && dish.photo.trim() !== '' ? (
                                       <>
                                         <ImagePreloader
@@ -777,14 +777,14 @@ const Home = () => {
                                           alt={dish.name}
                                           width={300}
                                           height={300}
-                                          className="object-cover w-full h-full"
+                                          className="object-cover w-full h-48"
                                           sizes="(max-width: 768px) 50vw, 25vw"
                                           quality={75}
                                         />
                                       </>
                                     ) : (
                                       <ImagePlaceholder
-                                        className="w-full h-full"
+                                        className="w-full h-48"
                                         size="md"
                                         text="Нет фото"
                                       />
