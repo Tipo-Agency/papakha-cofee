@@ -764,16 +764,16 @@ const Home = () => {
                                     {dish.photo && dish.photo.trim() !== '' ? (
                                       <>
                                         <ImagePreloader
-                                          src={getFullImageUrl(dish.photo)}
+                                          src={getFullImageUrl(dish.photo.replace(/\/{2,}/g, '/').replace('https:/', 'https://'))}
                                           onLoad={() => {
-                                            const imageUrl = getFullImageUrl(dish.photo)
+                                            const imageUrl = getFullImageUrl(dish.photo.replace(/\/{2,}/g, '/').replace('https:/', 'https://'))
                                             if (imageUrl && !isImageLoaded(imageUrl)) {
                                               addImageToCache(imageUrl)
                                             }
                                           }}
                                         />
                                         <LazyImage
-                                          src={getFullImageUrl(dish.photo)}
+                                          src={getFullImageUrl(dish.photo.replace(/\/{2,}/g, '/').replace('https:/', 'https://'))}
                                           alt={dish.name}
                                           width={300}
                                           height={300}
