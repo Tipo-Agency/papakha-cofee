@@ -61,17 +61,17 @@ export const VirtualDishesList: React.FC<VirtualDishesListProps> = ({
               className="absolute w-full"
               style={{ top, height: DISH_CARD_HEIGHT }}
             >
-              <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow p-4">
-                <div className="flex gap-4">
+              <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow p-2 sm:p-4">
+                <div className="flex gap-2 sm:gap-4">
                   <div className="flex-shrink-0">
-                    <div className="relative w-24 h-24 rounded-lg overflow-hidden">
+                    <div className="relative w-16 h-16 sm:w-24 sm:h-24 rounded-lg overflow-hidden">
                       {dish.photo && dish.photo.trim() !== '' ? (
                         <LazyImage
                           src={getFullImageUrl(dish.photo)}
                           alt={dish.name}
                           fill
                           className="object-cover"
-                          sizes="96px"
+                          sizes="(max-width: 640px) 64px, 96px"
                           quality={60}
                         />
                       ) : (
@@ -85,7 +85,7 @@ export const VirtualDishesList: React.FC<VirtualDishesListProps> = ({
                   </div>
                   
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-lg font-semibold text-[#94573c] mb-2 truncate">
+                    <h4 className="text-base sm:text-lg font-semibold text-[#94573c] mb-2 truncate">
                       {dish.name}
                     </h4>
                     {dish.description && (
@@ -94,7 +94,7 @@ export const VirtualDishesList: React.FC<VirtualDishesListProps> = ({
                       </p>
                     )}
                     <div className="flex justify-between items-center">
-                      <span className="text-lg font-bold text-[#94573c]">
+                      <span className="text-base sm:text-lg font-bold text-[#94573c]">
                         {dish.price} ₽
                       </span>
                       <Button 
